@@ -1,0 +1,83 @@
+&ACCESS RVO1
+&COMMENT 
+DEF Eingabe ( )
+;FOLD INI
+  ;FOLD BASISTECH INI
+    GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+    INTERRUPT ON 3 
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+
+;FOLD PTP HOME  Vel= 100 % DEFAULT;%{PE}%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:HOME, 3:, 5:100, 7:DEFAULT
+$BWDSTART = FALSE
+PDAT_ACT=PDEFAULT
+FDAT_ACT=FHOME
+BAS (#PTP_PARAMS,100 )
+$H_POS=XHOME
+PTP  XHOME
+;ENDFOLD
+MsgDialog(zeile,"Zeile eingeben",,,"3", "2", "1")
+MsgDialog(spalte,"Spalte eingeben",,,"3", "2", "1")
+MsgNotify("Zeile: %1", "Test", zeile)
+MsgNotify("Spalte: %1", "Test", spalte)
+
+
+
+zeile = zeile - 5
+spalte = spalte - 5
+
+xkoord = spalte * seitenlaenge
+ykoord = zeile * seitenlaenge
+
+MsgNotify("xkoord: %1", "Test", xkoord)
+MsgNotify("ykoord: %1", "Test", ykoord)
+
+cur = base
+cur.X = cur.X + xkoord
+cur.Y = cur.Y + ykoord
+cur.Z = cur.Z - 10
+
+;FOLD PTP cur  Vel=100 % PDAT2 Tool[15] Base[15];%{PE}%R 8.3.22,%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:cur, 3:, 5:100, 7:PDAT2
+$BWDSTART=FALSE
+PDAT_ACT=PPDAT2
+FDAT_ACT=Fcur
+BAS(#PTP_PARAMS,100)
+PTP Xcur 
+;ENDFOLD
+
+cur.Z = base.Z
+;FOLD PTP cur  Vel=100 % PDAT2 Tool[15] Base[15];%{PE}%R 8.3.22,%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:cur, 3:, 5:100, 7:PDAT2
+$BWDSTART=FALSE
+PDAT_ACT=PPDAT2
+FDAT_ACT=Fcur
+BAS(#PTP_PARAMS,100)
+PTP Xcur 
+;ENDFOLD
+
+; draw
+
+cur.Z = base.Z - 10
+;FOLD PTP cur  Vel=100 % PDAT2 Tool[15] Base[15];%{PE}%R 8.3.22,%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:cur, 3:, 5:100, 7:PDAT2
+$BWDSTART=FALSE
+PDAT_ACT=PPDAT2
+FDAT_ACT=Fcur
+BAS(#PTP_PARAMS,100)
+PTP Xcur 
+;ENDFOLD
+
+WAIT SEC 2
+;FOLD PTP HOME  Vel= 100 % DEFAULT;%{PE}%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:HOME, 3:, 5:100, 7:DEFAULT
+$BWDSTART = FALSE
+PDAT_ACT=PDEFAULT
+FDAT_ACT=FHOME
+BAS (#PTP_PARAMS,100 )
+$H_POS=XHOME
+PTP  XHOME
+;ENDFOLD
+
+END
